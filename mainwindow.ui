@@ -439,6 +439,9 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="tempo">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
@@ -456,6 +459,9 @@
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="amplitude">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
@@ -516,6 +522,9 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="duracao_max">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
                </property>
@@ -537,6 +546,9 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="duracao_min">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
                </property>
@@ -843,6 +855,9 @@
       <widget class="QPushButton" name="conectar">
        <property name="text">
         <string>Conectar</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

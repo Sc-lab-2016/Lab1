@@ -3,7 +3,6 @@
 
 #include <QThread>
 #include "quanser.h"
-#include <iostream>
 
 class threadControl : public QThread
 {
@@ -15,7 +14,7 @@ public:
     explicit threadControl(QObject *parent =0);
     void inicia();    
     void zeraParametros(void);    
-    void atualizaParametros(double tipoOnda, double basicoNivel1, double basicoNivel2, double tempo, double amplitude, double offset, double duracaoMax, double duracaoMin);
+    void atualizaParametros(bool thr_malhaFechada, int thr_tipoOnda, double thr_basicoNivel1, double thr_basicoNivel2, double thr_tempo, double thr_amplitude, double thr_offset, double thr_duracaoMax, double thr_duracaoMin);
 
 private:
 
@@ -25,7 +24,6 @@ private:
     bool conectado;
 
     int tipoOnda; //selecionador de tipo de onda
-    int proxtipoOnda;
 
     double basicoNivel1; // nivel tanque 1
     double basicoNivel2; // nivel tanque 2
@@ -35,11 +33,11 @@ private:
     double amplitude;
     double offset;
     double duracaoMax;
+    double erro;
     double duracaoMin;
     double sinalCalculado, sinalSaturado;
-    double erro;
-    double lastTimeStamp, timeToNextRandomNumber; // medidas de tempo
-    double lastLoopTimeStamp; // medidas de tempo
+    double timeToNextRandomNumber; // medidas de tempo
+    double lastTimeStamp, lastLoopTimeStamp; // medidas de tempo
 
     //funcoes
     double travaSinal(double sinalCalculado, double leituraTanque1, double leituraTanque2);

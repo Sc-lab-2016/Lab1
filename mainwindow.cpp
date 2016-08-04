@@ -7,9 +7,26 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+
+
     ui->setupUi(this);
 
-    on_zerar_clicked();
+   // QMainWindow::showFullScreen();
+
+    malhaFechada=true;
+    tipoOnda=degrau;
+    basicoNivel1=0;
+    basicoNivel2=0 ;
+    tempo=1;
+    amplitude=3;
+    offset=0;
+    duracaoMax=4;
+    duracaoMin=4;
+    //Cria Threads e conecta signals com slots
+    theThread = new threadControl(this);
+    connect(theThread,SIGNAL(plotValues(double,double,double,double,double,double, double)),this,SLOT(onPlotValues(double, double,double,double,double,double,double)));
+
+
 }
 
 MainWindow::~MainWindow()
@@ -21,12 +38,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::onPlotValues(double timeStamp, double sinalCalculado, double sinalSaturado, double leituraTanque1, double leituraTanque2, double setPoint, double erro)
 {
-    if(sinalSaturado<0){
-    sinalSaturado=sinalSaturado*=-1;
-    }
-    sinalSaturado=(sinalSaturado*12.5)+50;
 
-    ui->progressBar_sinalSaturado1->setValue(10);
+    if(sinalSaturado<0){
+    sinalSaturado=sinalSaturado+(sinalSaturado*12.5);
+    }
+    else {
+    sinalSaturado=(sinalSaturado*12.5)+50;
+    }
+    ui->progressBar_sinalSaturado1->setValue(sinalSaturado);
     QString s = QString::number(sinalCalculado);
     ui->label_teste->setText(s);
 
@@ -66,7 +85,6 @@ void MainWindow::on_conectar_clicked(bool checked)
 {
     conectado=checked;
 
-
     if (conectado==true) {
         ui->conectar->setText("Desconectar");
         ui->label_conectar->setText("Conectado");
@@ -80,23 +98,27 @@ void MainWindow::on_conectar_clicked(bool checked)
         //Espera a thread ler os valores
         QThread::msleep (1000);
         //Termina a thread
-        //theThread->terminate();
+        theThread->terminate();
     }
 
 }
 
 void MainWindow::on_atualizar_clicked()
 {
-
-    ui->tempo_Hz_s->setCurrentIndex(segundoOuFrequencia);
-    ui->basico_nivel1->setValue(basicoNivel1);
-    ui->basico_nivel2->setValue(basicoNivel2);
-    ui->tempo->setValue(tempo);
-    ui->amplitude->setValue(amplitude);
-    ui->offset->setValue(offset);
-    ui->duracao_max->setValue(duracaoMax);
-    ui->duracao_min->setValue(duracaoMin);
-
+    malhaFechada=ui->malhaFechada->isChecked();
+    segundoOuFrequencia=ui->tempo_Hz_s->currentIndex();
+    basicoNivel1=ui->basico_nivel1->value();
+    basicoNivel2=ui->basico_nivel2->value();
+    if(ui->tempo_Hz_s->currentIndex()==0){
+        tempo=1/tempo;
+    }
+    tempo=ui->tempo->value();
+    amplitude=ui->amplitude->value();
+    offset=ui->offset->value();
+    duracaoMax=ui->duracao_max->value();
+    duracaoMin=ui->duracao_min->value();
+    tipoOnda=proxtipoOnda;
+    theThread->atualizaParametros(malhaFechada,tipoOnda, basicoNivel1 , basicoNivel2, tempo, amplitude, offset,  duracaoMax,  duracaoMin);
 
 }
 
@@ -110,26 +132,56 @@ void MainWindow::on_tempo_Hz_s_currentIndexChanged(int index)
 void MainWindow::on_sinal_dregrau_clicked()
 {
     proxtipoOnda=degrau;
+    ui->tempo->setEnabled(false);
+    ui->amplitude->setEnabled(false);
+    ui->offset->setEnabled(true);
+    ui->duracao_max->setEnabled(false);
+    ui->duracao_min->setEnabled(false);
+
 }
 
 void MainWindow::on_sinal_quadrada_clicked()
 {
     proxtipoOnda=quadrada;
+    ui->tempo->setEnabled(true);
+    ui->amplitude->setEnabled(true);
+    ui->offset->setEnabled(true);
+    ui->duracao_max->setEnabled(false);
+    ui->duracao_min->setEnabled(false);
+
 }
 
 void MainWindow::on_sinal_senoidal_clicked()
 {
     proxtipoOnda=senoidal;
+    ui->tempo->setEnabled(true);
+    ui->amplitude->setEnabled(true);
+    ui->offset->setEnabled(true);
+    ui->duracao_max->setEnabled(false);
+    ui->duracao_min->setEnabled(false);
+
 }
 
 void MainWindow::on_sinal_serra_clicked()
 {
     proxtipoOnda=serra;
+    ui->tempo->setEnabled(true);
+    ui->amplitude->setEnabled(true);
+    ui->offset->setEnabled(true);
+    ui->duracao_max->setEnabled(false);
+    ui->duracao_min->setEnabled(false);
+
 }
 
 void MainWindow::on_sinal_aleatorio_clicked()
 {
     proxtipoOnda=aleatorio;
+    ui->tempo->setEnabled(true);
+    ui->amplitude->setEnabled(true);
+    ui->offset->setEnabled(true);
+    ui->duracao_max->setEnabled(true);
+    ui->duracao_min->setEnabled(true);
+
 }
 
 void MainWindow::on_zerar_clicked()
@@ -138,12 +190,19 @@ void MainWindow::on_zerar_clicked()
     segundoOuFrequencia=0;
     tipoOnda=0; //selecionador de tipo de onda
     basicoNivel1=0;
+    ui->basico_nivel1->setValue(basicoNivel1);
     basicoNivel2=0;
+    ui->basico_nivel2->setValue(basicoNivel2);
     tempo=0; // segundos ou hz
+    ui->tempo->setValue(tempo);
     amplitude=0;
+    ui->amplitude->setValue(amplitude);
     offset=0;
+    ui->offset->setValue(offset);
     duracaoMax=0;
+    ui->duracao_max->setValue(duracaoMax);
     duracaoMin=0;
+    ui->duracao_min->setValue(duracaoMin);
     ui->basico_moderada->click();
     ui->leitura_1->clicked();
     ui->leitura_2->clicked();

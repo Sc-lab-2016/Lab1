@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QtCore/qmath.h>
 #include <cmath>
+#include "qdebug.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
    // QMainWindow::showFullScreen();
 
     malhaFechada=true;
-    tipoOnda=degrau;
+    tipoOnda=0;
     basicoNivel1=0;
     basicoNivel2=0 ;
     tempo=1;
@@ -106,6 +107,12 @@ void MainWindow::on_conectar_clicked(bool checked)
 void MainWindow::on_atualizar_clicked()
 {
     malhaFechada=ui->malhaFechada->isChecked();
+    if(malhaFechada==true){
+        ui->label_offset->setText("offset (Cm)");
+    }
+    if(malhaFechada==false){
+       ui->label_offset->setText("offset (Volts)");
+    }
     segundoOuFrequencia=ui->tempo_Hz_s->currentIndex();
     basicoNivel1=ui->basico_nivel1->value();
     basicoNivel2=ui->basico_nivel2->value();
@@ -240,4 +247,111 @@ void MainWindow::on_duracao_max_valueChanged(double arg1)
 void MainWindow::on_duracao_min_valueChanged(double arg1)
 {
     duracaoMin=arg1;
+}
+
+void MainWindow::on_pushButton_default_clicked()
+{
+    offset=2.5;
+    if(malhaFechada==true){
+        offset=15;
+    }
+    ui->offset->setValue(offset);
+    switch(this->proxtipoOnda)
+    {
+    case 0://degrau:
+        basicoNivel1=0;
+        ui->basico_nivel1->setValue(basicoNivel1);
+        basicoNivel2=0;
+        ui->basico_nivel2->setValue(basicoNivel2);
+        tempo=0; // segundos ou hz
+        ui->tempo->setValue(tempo);
+        amplitude=0;
+        ui->amplitude->setValue(amplitude);
+        duracaoMax=0;
+        ui->duracao_max->setValue(duracaoMax);
+        duracaoMin=0;
+        ui->duracao_min->setValue(duracaoMin);
+        break;
+    case 1://senoidal:
+        basicoNivel1=0;
+        ui->basico_nivel1->setValue(basicoNivel1);
+        basicoNivel2=0;
+        ui->basico_nivel2->setValue(basicoNivel2);
+        tempo=0; // segundos ou hz
+        ui->tempo->setValue(tempo);
+        amplitude=0;
+        ui->amplitude->setValue(amplitude);
+        duracaoMax=0;
+        ui->duracao_max->setValue(duracaoMax);
+        duracaoMin=0;
+        ui->duracao_min->setValue(duracaoMin);
+        break;
+    case 2://quadrada:
+        basicoNivel1=0;
+        ui->basico_nivel1->setValue(basicoNivel1);
+        basicoNivel2=0;
+        ui->basico_nivel2->setValue(basicoNivel2);
+        tempo=0; // segundos ou hz
+        ui->tempo->setValue(tempo);
+        amplitude=0;
+        ui->amplitude->setValue(amplitude);
+        duracaoMax=0;
+        ui->duracao_max->setValue(duracaoMax);
+        duracaoMin=0;
+        ui->duracao_min->setValue(duracaoMin);
+        break;
+    case 3://serra:
+        basicoNivel1=0;
+        ui->basico_nivel1->setValue(basicoNivel1);
+        basicoNivel2=0;
+        ui->basico_nivel2->setValue(basicoNivel2);
+        tempo=0; // segundos ou hz
+        ui->tempo->setValue(tempo);
+        amplitude=0;
+        ui->amplitude->setValue(amplitude);
+        duracaoMax=0;
+        ui->duracao_max->setValue(duracaoMax);
+        duracaoMin=0;
+        ui->duracao_min->setValue(duracaoMin);
+        break;
+    case 4://aleatorio:
+        basicoNivel1=0;
+        ui->basico_nivel1->setValue(basicoNivel1);
+        basicoNivel2=0;
+        ui->basico_nivel2->setValue(basicoNivel2);
+        tempo=0; // segundos ou hz
+        ui->tempo->setValue(tempo);
+        amplitude=0;
+        ui->amplitude->setValue(amplitude);
+        duracaoMax=0;
+        ui->duracao_max->setValue(duracaoMax);
+        duracaoMin=0;
+        ui->duracao_min->setValue(duracaoMin);
+        break;
+    default:
+        qDebug() << "ERRO: Nenhuma onda selecionada!";
+    }
+
+}
+
+void MainWindow::on_malhaAberta_clicked(bool checked)
+{
+
+    if(checked==true){
+        ui->label_offset->setText("offset (Volts)");
+        this->malhaFechada==false;
+    }
+
+    ui->offset->setMinimum(-4.0);
+    ui->offset->setMaximum(4.0);
+}
+
+void MainWindow::on_malhaFechada_clicked(bool checked)
+{
+    if(checked==true){
+        ui->label_offset->setText("offset (Cm)");
+        this->malhaFechada==true;
+    }
+    ui->offset->setMinimum(0.0);
+    ui->offset->setMaximum(30.0);
 }

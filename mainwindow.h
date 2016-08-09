@@ -56,6 +56,13 @@ private slots:
 
     void on_zerar_clicked();
 
+    void on_pushButton_default_clicked();
+
+
+    void on_malhaAberta_clicked(bool checked);
+
+    void on_malhaFechada_clicked(bool checked);
+
 private:
     Ui::MainWindow *ui;
     QString demoName;

@@ -13,6 +13,7 @@ class threadControl : public QThread
 public:
 
     explicit threadControl(QObject *parent =0);
+    Quanser* q = new Quanser("10.13.99.69", 20081);
     void inicia();    
     void zeraParametros(void);    
     void atualizaParametros(bool thr_malhaFechada, int thr_tipoOnda, double thr_basicoNivel1, double thr_basicoNivel2, double thr_tempo, double thr_amplitude, double thr_offset, double thr_duracaoMax, double thr_duracaoMin);

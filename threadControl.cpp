@@ -5,33 +5,94 @@
 threadControl::threadControl(QObject *parent):
     QThread(parent)
 {
-    tipoOnda=0;
+    this->tipoOnda=0;
+
 }
 
 void threadControl::run(){
-    lastLoopTimeStamp=QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
-    this->erro=0;
-    this->sinalSaturado=0;
-    this->offset=0;
-    this->leituraTanque1=1;
-    this->leituraTanque2=1;
-    int i=0;
-    double setPoint=0;
-    double timeStamp=0;
-    //Reads Time
-    timeStamp = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
-    if(timeStamp-this->lastLoopTimeStamp > 0.1){
-        this->lastLoopTimeStamp=timeStamp;
-        this->sinalCalculado = this->offset;
-        this->sinalSaturado = threadControl::travaSinal(this->sinalCalculado, this->leituraTanque1, this->leituraTanque2 );
-        i++;
-        qDebug() << "emitiu: ";
-        qDebug() << i;
-        emit plotValues(timeStamp, this->sinalCalculado,
-                        this->sinalSaturado, this->leituraTanque1,
-                        this->leituraTanque2, setPoint, this->erro);
+
+    //Conecta com os tanques
+
+
+    //Inicia a contagem de tempo
+    double timeStamp = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+
+    double leituraTanque1 = q->readAD(0) * 6.25;// ler sensor e multiplica pelo ganho
+    if (leituraTanque1 < 0) leituraTanque1 = 0;
+    double leituraTanque2 = q->readAD(1) * 6.25;
+    if (leituraTanque2 < 0) leituraTanque2 = 0;
+    qDebug() << "tipo de onda:";
+    qDebug() << tipoOnda;
+    switch(this->tipoOnda)
+    {
+    case 0://degrau:
+        sinalCalculado = offset;
+        break;
+    case 1://senoidal:
+        sinalCalculado = qSin(timeStamp*3.14159265359*tempo)*amplitude+offset;
+        break;
+    case 2://quadrada:
+        sinalCalculado = qSin(timeStamp*3.14159265359*tempo)*amplitude;
+        if(sinalCalculado>0)sinalCalculado = amplitude+offset;
+        else sinalCalculado = -amplitude+offset;
+        break;
+    case 3://serra:
+        sinalCalculado = (fmod((timeStamp*3.14159265359*tempo), (2*3.14159265359))/(2*3.14159265359))*amplitude*2-amplitude+offset;
+        break;
+    case 4://aleatorio:
+        if((timeStamp-lastTimeStamp)>timeToNextRandomNumber){
+            sinalCalculado = (double)rand()/RAND_MAX * amplitude * 2 - amplitude + offset;
+            lastTimeStamp=timeStamp;
+            timeToNextRandomNumber= ((double)rand()/RAND_MAX) * (duracaoMax-duracaoMin) + duracaoMin;
+            if (timeToNextRandomNumber>duracaoMax)timeToNextRandomNumber=duracaoMax;//Isso não deveria acontecer
+        }
+        break;
+    default:
+        qDebug() << "ERRO: Nenhuma onda selecionada!";
     }
-    timer->start(100);
+
+
+    //Calculates other points]
+
+    qDebug() << "leituraTanque1:";
+    qDebug() << leituraTanque1;
+    qDebug() << "leituraTanque2:";
+    qDebug() << leituraTanque2;
+    qDebug() << "sinalCalculado:";
+    qDebug() << sinalCalculado;
+
+    double sinalSaturado = threadControl::travaSinal(sinalCalculado, leituraTanque1, leituraTanque2 );
+    double setPoint =0;
+    double erro = 0;
+
+
+    if(malhaFechada == true){//malha fechada
+         qDebug() << "malha fechada";
+        setPoint = sinalCalculado;
+        erro = setPoint-leituraTanque1;
+        // o sinal calculado agora eh o erro
+        qDebug() << "erro:";
+        qDebug() << erro;
+        sinalSaturado = threadControl::travaSinal(erro, leituraTanque1, leituraTanque2 );
+    }
+
+
+
+    // Escreve no canal 0
+     qDebug() << "Sinal  Saturado:";
+     qDebug() << sinalSaturado;
+     q->writeDA(0, sinalSaturado);
+
+
+    emit plotValues(timeStamp, this->sinalCalculado,
+                    this->sinalSaturado, this->leituraTanque1,
+                    this->leituraTanque2, setPoint, this->erro);
+
+
+
+    timer->start(10);
+
+     qDebug() << "________________";
 }
 
 void threadControl::inicia()
@@ -39,81 +100,7 @@ void threadControl::inicia()
 
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(run()));
-    timer->start(100);
-    //     //Conecta com os tanques
-    //    Quanser* q = new Quanser("10.13.99.69", 20081);
-
-    //    //Inicia a contagem de tempo
-    //    lastLoopTimeStamp=QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
-
-
-
-    //    while(1) {
-
-    //        //Reads Time
-    //        double timeStamp = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
-
-    //        if(timeStamp-lastLoopTimeStamp > 0.1){
-    //            lastLoopTimeStamp=timeStamp;
-
-    //            double leituraTanque1 = q->readAD(0) * 6.25;// ler sensor e multiplica pelo ganho
-    //            if (leituraTanque1 < 0) leituraTanque1 = 0;
-    //            double leituraTanque2 = q->readAD(1) * 6.25;
-    //            if (leituraTanque2 < 0) leituraTanque2 = 0;
-
-    //            switch(tipoOnda)
-    //            {
-    //            case 0://degrau:
-    //                sinalCalculado = offset;
-    //                break;
-    //            case 1://senoidal:
-    //                sinalCalculado = qSin(timeStamp*3.14159265359*tempo)*amplitude+offset;
-    //                break;
-    //            case 2://quadrada:
-    //                sinalCalculado = qSin(timeStamp*3.14159265359*tempo)*amplitude;
-    //                if(sinalCalculado>0)sinalCalculado = amplitude+offset;
-    //                else sinalCalculado = -amplitude+offset;
-    //                break;
-    //            case 3://serra:
-    //                sinalCalculado = (fmod((timeStamp*3.14159265359*tempo), (2*3.14159265359))/(2*3.14159265359))*amplitude*2-amplitude+offset;
-    //                break;
-    //            case 4://aleatorio:
-    //                if((timeStamp-lastTimeStamp)>timeToNextRandomNumber){
-    //                    sinalCalculado = (double)rand()/RAND_MAX * amplitude * 2 - amplitude + offset;
-    //                    lastTimeStamp=timeStamp;
-    //                    timeToNextRandomNumber= ((double)rand()/RAND_MAX) * (duracaoMax-duracaoMin) + duracaoMin;
-    //                    if (timeToNextRandomNumber>duracaoMax)timeToNextRandomNumber=duracaoMax;//Isso não deveria acontecer
-    //                }
-    //                break;
-    //            default:
-    //                qDebug() << "ERRO: Nenhuma onda selecionada!";
-    //            }
-
-
-
-    //            //Calculates other points
-    //            double sinalSaturado = threadControl::travaSinal(sinalCalculado, leituraTanque1, leituraTanque2 );
-
-
-    //            double setPoint =0;
-    //            double erro = 0;
-    //            if(malhaFechada == true){//malha fechada
-    //             setPoint = sinalCalculado;
-    //             erro = setPoint - leituraTanque1;
-    //             // o sinal calculado agora eh o erro
-    //             sinalSaturado = threadControl::travaSinal(erro, leituraTanque1, leituraTanque2 );
-    //            }
-
-
-
-    //            // Escreve no canal 0
-    //            q->writeDA(0, sinalSaturado);
-
-    //            // Envia valores para o supervisorio
-    //               emit plotValues(timeStamp, sinalCalculado, sinalSaturado, leituraTanque1, leituraTanque2, setPoint, erro);
-
-    //        }
-    //    }
+    timer->start(10);
 
 
 
@@ -137,21 +124,43 @@ double threadControl::travaSinal(double sinalCalculado, double leituraTanque1, d
     double sinalSaturado=sinalCalculado;
 
     //Trava 1 ( sinal nao pode ser maior 4 ou menor que -4)
-    if(sinalCalculado>4) sinalSaturado=4;
-    else if(sinalCalculado<-4) sinalSaturado=-4;
+    if(sinalCalculado>4){
+        sinalSaturado=4;
+         qDebug() << "Trava 1";
+    }
+    else if(sinalCalculado<-4){
+        sinalSaturado=-4;
+         qDebug() << "Trava 1";
+    }
 
     //Trava 2 ( bomba nao pode sugar ar)
-    if(leituraTanque1<8 && sinalCalculado<0) sinalSaturado=0;
+    if(leituraTanque1<8 && sinalCalculado<0){
+        sinalSaturado=0;
+         qDebug() << "Trava 2";
+
+    }
 
     //Trava 3 ( tanque 1 cheio, manter)
-    if(leituraTanque1>28 && sinalCalculado>2.97) sinalSaturado=2.97;
+    if(leituraTanque1>28 && sinalCalculado>2.97){
+        sinalSaturado=2.97;
+         qDebug() << "Trava 3";
+    }
 
     //Trava 4 ( tanque 1 cheio, desligar bomba)
-    if(leituraTanque1>29 && sinalCalculado>0) sinalSaturado=0;
+    if(leituraTanque1>29 && sinalCalculado>0){
+        sinalSaturado=0;
+         qDebug() << "Trava 4";
+    }
 
     //Trava 5 ( tanque 1 vai transbordar tanque 2 , sugar tanque 1)
-    if(leituraTanque2 > 26 && leituraTanque1 > 8) sinalSaturado = -4;
-    else if (leituraTanque2 > 26) sinalSaturado = 0;
+    if(leituraTanque2 > 24 && leituraTanque1 > 1){
+        sinalSaturado = -4;
+         qDebug() << "Trava 5";
+    }
+    else if (leituraTanque2 > 24){
+        sinalSaturado = 0;
+         qDebug() << "Trava 5";
+    }
 
 
     return sinalSaturado;

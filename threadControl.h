@@ -2,6 +2,7 @@
 #define THREADCONTROL_H
 
 #include <QThread>
+#include <QTimer>
 #include "quanser.h"
 
 class threadControl : public QThread
@@ -39,12 +40,16 @@ private:
     double timeToNextRandomNumber; // medidas de tempo
     double lastTimeStamp, lastLoopTimeStamp; // medidas de tempo
 
+    QTimer *timer;
+
     //funcoes
     double travaSinal(double sinalCalculado, double leituraTanque1, double leituraTanque2);
 
 signals:
     void plotValues(double,double,double,double,double,double,double);
 
+protected slots:
+    void run();
 };
 
 #endif // THREADCONTROL_H

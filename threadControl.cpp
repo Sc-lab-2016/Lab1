@@ -97,7 +97,7 @@ void threadControl::run(){
 
 void threadControl::inicia()
 {
-
+    q = new Quanser("10.13.99.69", 20081);
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(run()));
     timer->start(10);

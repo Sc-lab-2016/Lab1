@@ -15,9 +15,11 @@ void threadControl::run(){
     timeStamp = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     lastLoopTimeStamp=timeStamp;
 
-    double leituraTanque1 = 0;//q->readAD(0) * 6.25;// ler sensor e multiplica pelo ganho
+    double leituraTanque1 =q->readAD(0) * 6.25;// ler sensor e multiplica pelo ganho
+    //double leituraTanque1 =0;// ler sensor e multiplica pelo ganho
     if (leituraTanque1 < 0) leituraTanque1 = 0;
-    double leituraTanque2 =0;//q->readAD(1) * 6.25;
+    double leituraTanque2 =q->readAD(1) * 6.25;
+    //double leituraTanque2 =0;
     if (leituraTanque2 < 0) leituraTanque2 = 0;
     qDebug() << "tipo de onda:";
     qDebug() << tipoOnda;
@@ -52,10 +54,10 @@ void threadControl::run(){
 
     //Calculates other points]
 
-    qDebug() << "leituraTanque1:";
-    qDebug() << leituraTanque1;
-    qDebug() << "leituraTanque2:";
-    qDebug() << leituraTanque2;
+//    qDebug() << "leituraTanque1:";
+//    qDebug() << leituraTanque1;
+//    qDebug() << "leituraTanque2:";
+//    qDebug() << leituraTanque2;
     qDebug() << "sinalCalculado:";
     qDebug() << sinalCalculado;
 
@@ -77,25 +79,32 @@ void threadControl::run(){
 
 
     // Escreve no canal 0
-     qDebug() << "Sinal  Saturado:";
+     qDebug() << "Sinal  Saturado dentro:";
      qDebug() << sinalSaturado;
-     //q->writeDA(0, sinalSaturado);
+     q->writeDA(0, sinalSaturado);
 
-    double realTime = timeStamp-runTime;
+         qDebug() << "dentro thread leituraTanque1";
+         qDebug() <<leituraTanque1;
+         qDebug() << "dentro thread leituraTanque2";
+         qDebug() <<leituraTanque2;
+         qDebug() << "dentro thread  erro";
+         qDebug() <<erro;
+
+
     emit plotValues(timeStamp, this->sinalCalculado,
-                    this->sinalSaturado, this->leituraTanque1,
-                    this->leituraTanque2, setPoint, this->erro);
+                    sinalSaturado, leituraTanque1,
+                    leituraTanque2, setPoint, erro);
 
 
-    if(parar==false){
-        timer->start(10); // tempo de ciclo
-    }
+
+    timer->start(50); // tempo de ciclo
+
      qDebug() << "________________";
 }
 
 void threadControl::inicia()
 {
-    //q = new Quanser("10.13.99.69", 20081);
+    q = new Quanser("10.13.99.69", 20081);
     runTime = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     timer = new QTimer(this);
     //incia contagem de tempo

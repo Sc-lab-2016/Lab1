@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
    // QMainWindow::showFullScreen();
-    plotRangeX = 8;
+
 
     // Setup plots
     setupPlot1(ui->customPlot);
@@ -32,7 +32,11 @@ MainWindow::MainWindow(QWidget *parent) :
     offset=0;
     duracaoMax=4;
     duracaoMin=4;
-    //Cria Threads e conecta signals com slots
+    plotRangeY=50;
+    plotRangeX=5;
+
+    //on_atualizar_clicked();
+    //Cria Threads e conecta signals com slot
     theThread = new threadControl(this);
     connect(theThread,SIGNAL(plotValues(double,double,double,double,double,double, double)),this,SLOT(onPlotValues(double, double,double,double,double,double,double)));
 
@@ -158,9 +162,9 @@ void MainWindow::updatePlot1(double timeStamp, double redPlot, double bluePlot)
 
     // make key axis range scroll with the data (at a constant range size of 8):
     ui->customPlot->xAxis->setRange(timeStamp+0.25, plotRangeX, Qt::AlignRight);
-    ui->customPlot->yAxis->setRange(0, plotRangeY, Qt::AlignRight);
+    ui->customPlot->yAxis->setRange(25, plotRangeY, Qt::AlignRight);
     ui->customPlot->replot();
-
+// ajuste escala
 }
 
 void MainWindow::updatePlot2(double timeStamp, double redPlot, double bluePlot, double greenPlot, double orangePlot)
@@ -206,7 +210,7 @@ void MainWindow::updatePlot2(double timeStamp, double redPlot, double bluePlot, 
 
     // make key axis range scroll with the data (at a constant range size of 8):
     ui->customPlot2->xAxis->setRange(timeStamp+0.25, plotRangeX, Qt::AlignRight);
-    ui->customPlot2->yAxis->setRange(0, plotRangeY, Qt::AlignRight);
+    ui->customPlot2->yAxis->setRange(35, 70, Qt::AlignRight);
     ui->customPlot2->replot();
 
 }
@@ -219,13 +223,17 @@ void MainWindow::onPlotValues(double timeStamp, double sinalCalculado, double si
 
 //    qDebug() << "timeStamp";
 //    qDebug() <<timeStamp;
-//    qDebug() << "sinalCalculado";
+//    qDebug() << "---->>>>>sinalCalculado";
 //    qDebug() <<sinalCalculado;
-//    qDebug() << "sinalSaturado";
+//    qDebug() << "---->>>>>sinalSaturado";
 //    qDebug() <<sinalSaturado;
 
 
     MainWindow::updatePlot1((timeStamp-theThread->runTime),sinalCalculado,sinalSaturado);
+
+    //    qDebug() << "---->>>>>sinalSaturado";
+    //    qDebug() <<sinalSaturado;
+
     MainWindow::updatePlot2((timeStamp-theThread->runTime),nivelTanque1,nivelTanque2,setPoint,erro);
 
     //Update Water Level
@@ -450,6 +458,13 @@ void MainWindow::on_pushButton_default_clicked()
         offset=4;
     }
     ui->offset->setValue(offset);
+    plotRangeY=50;
+    ui->spinBox_escalaY->setValue(plotRangeY);
+    ui->verticalSlider_escalaY->setValue(plotRangeY);
+    plotRangeX=5;
+    ui->spinBox_escalaX->setValue( plotRangeX);
+    ui->horizontalSlider_escalaX->setValue( plotRangeX);
+
     switch(this->proxtipoOnda)
     {
     case 0://degrau:
@@ -463,11 +478,11 @@ void MainWindow::on_pushButton_default_clicked()
         ui->duracao_min->setValue(duracaoMin);
         break;
     case 1://senoidal:
-        offset=3;
+        offset=0;
         ui->offset->setValue(offset);
-        tempo=10; // segundos ou hz
+        tempo=5; // segundos ou hz
         ui->tempo->setValue(tempo);
-        amplitude=1;
+        amplitude=20;
         ui->amplitude->setValue(amplitude);
         duracaoMax=0;
         ui->duracao_max->setValue(duracaoMax);

@@ -19,6 +19,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "qdebug.h"
+
 using std::cout;
 using std::cin;
 using std::string;
@@ -94,6 +96,8 @@ private:
 
    int sendData(std::string _toSend) {
         int _tamanho = _toSend.length();
+        qDebug() << "_tamanho:";
+        qDebug() << _tamanho;
         write(this->sockfd,_toSend.c_str(),_tamanho);
         return 0;
    }

@@ -16,10 +16,10 @@ void threadControl::run(){
     lastLoopTimeStamp=timeStamp;
 
     double leituraTanque1 =q->readAD(0) * 6.25;// ler sensor e multiplica pelo ganho
-    //double leituraTanque1 =0;// ler sensor e multiplica pelo ganho
+    //double leituraTanque1 =(10*qSin(timeStamp*0.25))+10;// ler sensor e multiplica pelo ganho
     if (leituraTanque1 < 0) leituraTanque1 = 0;
     double leituraTanque2 =q->readAD(1) * 6.25;
-    //double leituraTanque2 =0;
+    //double leituraTanque2 =(10*qSin(timeStamp*0.25))+10;
     if (leituraTanque2 < 0) leituraTanque2 = 0;
     qDebug() << "tipo de onda:";
     qDebug() << tipoOnda;
@@ -97,7 +97,7 @@ void threadControl::run(){
 
 
 
-    timer->start(50); // tempo de ciclo
+    timer->start(100); // tempo de ciclo
 
      qDebug() << "________________";
 }
@@ -111,7 +111,7 @@ void threadControl::inicia()
     //timeStamp = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     parar=false;
     connect(timer,SIGNAL(timeout()),this,SLOT(run()));
-    timer->start(10);
+    timer->start(100);
 
 }
 

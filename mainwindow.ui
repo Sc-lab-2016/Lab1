@@ -856,19 +856,6 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="label_teste">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>250</y>
-      <width>76</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>label teste</string>
-    </property>
-   </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
@@ -898,29 +885,10 @@
      </item>
     </layout>
    </widget>
-   <widget class="QProgressBar" name="progressBar_sinalSaturado1">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>20</y>
-      <width>41</width>
-      <height>201</height>
-     </rect>
-    </property>
-    <property name="value">
-     <number>24</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-    <property name="format">
-     <string>%pv</string>
-    </property>
-   </widget>
    <widget class="QCustomPlot" name="customPlot" native="true">
     <property name="geometry">
      <rect>
-      <x>360</x>
+      <x>280</x>
       <y>40</y>
       <width>831</width>
       <height>271</height>
@@ -930,7 +898,7 @@
    <widget class="QCustomPlot" name="customPlot2" native="true">
     <property name="geometry">
      <rect>
-      <x>360</x>
+      <x>280</x>
       <y>360</y>
       <width>831</width>
       <height>271</height>
@@ -963,7 +931,7 @@
    <widget class="QSlider" name="verticalSlider_escalaY">
     <property name="geometry">
      <rect>
-      <x>1210</x>
+      <x>1220</x>
       <y>260</y>
       <width>29</width>
       <height>160</height>
@@ -976,11 +944,75 @@
    <widget class="QSpinBox" name="spinBox_escalaY">
     <property name="geometry">
      <rect>
-      <x>1200</x>
+      <x>1210</x>
       <y>220</y>
       <width>51</width>
       <height>30</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="progressBar_leituraTanque1">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>70</y>
+      <width>41</width>
+      <height>201</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>24</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+    <property name="format">
+     <string>%pv</string>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="progressBar_leituraTanque2">
+    <property name="geometry">
+     <rect>
+      <x>1150</x>
+      <y>400</y>
+      <width>41</width>
+      <height>201</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>24</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+    <property name="format">
+     <string>%pv</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_leituraTanque2">
+    <property name="geometry">
+     <rect>
+      <x>1160</x>
+      <y>620</y>
+      <width>31</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>0cm</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_leituraTanque1">
+    <property name="geometry">
+     <rect>
+      <x>1150</x>
+      <y>290</y>
+      <width>31</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>0cm</string>
     </property>
    </widget>
   </widget>

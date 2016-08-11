@@ -228,19 +228,15 @@ void MainWindow::onPlotValues(double timeStamp, double sinalCalculado, double si
 //    qDebug() << "---->>>>>sinalSaturado";
 //    qDebug() <<sinalSaturado;
 
-
+    ui->progressBar_leituraTanque1->setValue(nivelTanque1*100);
+    ui->label_leituraTanque1->setText(QString::number(nivelTanque1,'g',2)+" cm");
+    ui->progressBar_leituraTanque2->setValue(nivelTanque2*100);
+    ui->label_leituraTanque2->setText(QString::number(nivelTanque2,'g',2)+" cm");
     MainWindow::updatePlot1((timeStamp-theThread->runTime),sinalCalculado,sinalSaturado);
-
-    //    qDebug() << "---->>>>>sinalSaturado";
-    //    qDebug() <<sinalSaturado;
-
     MainWindow::updatePlot2((timeStamp-theThread->runTime),nivelTanque1,nivelTanque2,setPoint,erro);
 
     //Update Water Level
-    //ui->progressBar->setValue(nivelTanque1*100);
-//    ui->label_5->setText(QString::number(nivelTanque1,'g',2)+" cm");
-//   // ui->progressBar_2->setValue(nivelTanque2*100);
-//    ui->label_7->setText(QString::number(nivelTanque2,'g',2)+" cm");
+
 
 }
 
@@ -461,7 +457,7 @@ void MainWindow::on_pushButton_default_clicked()
     plotRangeY=50;
     ui->spinBox_escalaY->setValue(plotRangeY);
     ui->verticalSlider_escalaY->setValue(plotRangeY);
-    plotRangeX=5;
+    plotRangeX=50;
     ui->spinBox_escalaX->setValue( plotRangeX);
     ui->horizontalSlider_escalaX->setValue( plotRangeX);
 

@@ -67,9 +67,13 @@ private slots:
 
 
     void on_malhaAberta_clicked(bool checked);
-
     void on_malhaFechada_clicked(bool checked);
 
+    void setTickStep();
+    void on_verticalSlider_escalaY_valueChanged(int value);
+    void on_spinBox_escalaY_valueChanged(int arg1);
+    void on_spinBox_escalaX_valueChanged(int arg1);
+    void on_horizontalSlider_escalaX_valueChanged(int value);
 private:
     Ui::MainWindow *ui;
     QString demoName;
@@ -82,7 +86,7 @@ private:
 
     int tipoOnda;//selecionador de tipo de onda
     int proxtipoOnda;
-    int plotRange;
+    int plotRangeX, plotRangeY;
 
     double basicoNivel1; // nivel tanque 1
     double basicoNivel2; // nivel tanque 2
@@ -98,7 +102,6 @@ private:
     double lastTimeStamp, timeToNextRandomNumber; // medidas de tempo
     double lastLoopTimeStamp; // medidas de tempo
 
-    void setTickStep();
 };
 
 #endif // MAINWINDOW_H

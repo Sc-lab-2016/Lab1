@@ -14889,11 +14889,7 @@ void QCPGraph::addData(double key, double value)
 {
   QCPData newData;
   newData.key = key;
-  qDebug() << "key";
-  qDebug() <<newData.key;
   newData.value =  value;
-  qDebug() << "value";
-  qDebug() << newData.value;
 
   mData->insertMulti(newData.key, newData);
 }

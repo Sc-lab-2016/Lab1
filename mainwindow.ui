@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
@@ -42,6 +42,9 @@
       <layout class="QVBoxLayout" name="verticalLayout_10">
        <item>
         <widget class="QPushButton" name="basico_rapida">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Rápida</string>
          </property>
@@ -71,6 +74,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="basico_estavel">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Estável</string>
          </property>
@@ -153,6 +159,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout_9">
        <item>
         <widget class="QDoubleSpinBox" name="basico_nivel2">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="suffix">
           <string> cm</string>
          </property>
@@ -166,6 +175,9 @@
        </item>
        <item>
         <widget class="QSlider" name="basico_slider2">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="maximum">
           <number>25</number>
          </property>
@@ -176,6 +188,9 @@
        </item>
        <item>
         <widget class="QProgressBar" name="basico_progressBar2">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -844,8 +859,8 @@
    <widget class="QLabel" name="label_teste">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>410</y>
+      <x>260</x>
+      <y>250</y>
       <width>76</width>
       <height>20</height>
      </rect>
@@ -886,8 +901,8 @@
    <widget class="QProgressBar" name="progressBar_sinalSaturado1">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>140</y>
+      <x>260</x>
+      <y>20</y>
       <width>41</width>
       <height>201</height>
      </rect>
@@ -905,7 +920,7 @@
    <widget class="QCustomPlot" name="customPlot" native="true">
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>360</x>
       <y>40</y>
       <width>831</width>
       <height>271</height>
@@ -915,10 +930,56 @@
    <widget class="QCustomPlot" name="customPlot2" native="true">
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>360</x>
       <y>360</y>
       <width>831</width>
       <height>271</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QSlider" name="horizontalSlider_escalaX">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>650</y>
+      <width>160</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spinBox_escalaX">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>650</y>
+      <width>51</width>
+      <height>30</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QSlider" name="verticalSlider_escalaY">
+    <property name="geometry">
+     <rect>
+      <x>1210</x>
+      <y>260</y>
+      <width>29</width>
+      <height>160</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spinBox_escalaY">
+    <property name="geometry">
+     <rect>
+      <x>1200</x>
+      <y>220</y>
+      <width>51</width>
+      <height>30</height>
      </rect>
     </property>
    </widget>

@@ -17,7 +17,8 @@ public:
     void inicia();    
     void zeraParametros(void);    
     void atualizaParametros(bool thr_malhaFechada, int thr_tipoOnda, double thr_basicoNivel1, double thr_basicoNivel2, double thr_tempo, double thr_amplitude, double thr_offset, double thr_duracaoMax, double thr_duracaoMin);
-
+    double runTime;
+    bool parar;
 private:
 
     //variaveis

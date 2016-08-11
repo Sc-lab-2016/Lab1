@@ -5,7 +5,7 @@
 threadControl::threadControl(QObject *parent):
     QThread(parent)
 {
-    this->tipoOnda=0;
+
 
 }
 
@@ -81,28 +81,28 @@ void threadControl::run(){
      qDebug() << sinalSaturado;
      //q->writeDA(0, sinalSaturado);
 
-
+    double realTime = timeStamp-runTime;
     emit plotValues(timeStamp, this->sinalCalculado,
                     this->sinalSaturado, this->leituraTanque1,
                     this->leituraTanque2, setPoint, this->erro);
 
 
-
-    timer->start(10);
-
+    if(parar==false){
+        timer->start(10); // tempo de ciclo
+    }
      qDebug() << "________________";
 }
 
 void threadControl::inicia()
 {
     //q = new Quanser("10.13.99.69", 20081);
+    runTime = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     timer = new QTimer(this);
     //incia contagem de tempo
-    timeStamp = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+    //timeStamp = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+    parar=false;
     connect(timer,SIGNAL(timeout()),this,SLOT(run()));
     timer->start(10);
-
-
 
 }
 
@@ -172,8 +172,7 @@ void threadControl::zeraParametros()
     //    malhaFechada=true; // malha aberta ou fechada
     //    segundoOuFrequencia=0;
 
-    //    tipoOnda=0; //selecionador de tipo de onda
-
+    tipoOnda=0; //selecionador de tipo de onda
     basicoNivel1=0; // nivel tanque 1
     basicoNivel2=0; // nivel tanque 2
     tempo=0; // segundos ou hz
@@ -186,7 +185,7 @@ void threadControl::zeraParametros()
     erro=0;
     lastTimeStamp=0;
     timeToNextRandomNumber=0;
-    lastLoopTimeStamp=0;
+    lastLoopTimeStamp=0;    
 
 }
 

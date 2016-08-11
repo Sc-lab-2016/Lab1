@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
    // QMainWindow::showFullScreen();
-    plotRange = 8;
+    plotRangeX = 8;
 
     // Setup plots
     setupPlot1(ui->customPlot);
@@ -67,11 +67,12 @@ void MainWindow::setupPlot1(QCustomPlot *customPlot)
     customPlot->graph(3)->setLineStyle(QCPGraph::lsNone);
     customPlot->graph(3)->setScatterStyle(QCPScatterStyle::ssDisc);
 
-    customPlot->xAxis->setTickLabelType(QCPAxis::ltDateTime);
+    //customPlot->xAxis->setTickLabelType(QCPAxis::ltDateTime);
     customPlot->xAxis->setDateTimeFormat("hh:mm:ss");
     customPlot->xAxis->setAutoTickStep(false);
     //Valores no eixo X por segundo, proporcao utilizada no exemplo 8/4=2s
-    customPlot->xAxis->setTickStep(plotRange/4);
+    customPlot->xAxis->setTickStep(plotRangeX/4);
+    customPlot->yAxis->setTickStep(plotRangeY/4);
     customPlot->axisRect()->setupFullAxesBox();
 
 
@@ -120,11 +121,12 @@ void MainWindow::setupPlot2(QCustomPlot *customPlot2)
   customPlot2->graph(7)->setLineStyle(QCPGraph::lsNone);
   customPlot2->graph(7)->setScatterStyle(QCPScatterStyle::ssDisc);
 
-  customPlot2->xAxis->setTickLabelType(QCPAxis::ltDateTime);
+  //customPlot2->xAxis->setTickLabelType(QCPAxis::ltDateTime);
   customPlot2->xAxis->setDateTimeFormat("hh:mm:ss");
   customPlot2->xAxis->setAutoTickStep(false);
   //Valores no eixo X por segundo, proporcao utilizada no exemplo 8/4=2s
-  customPlot2->xAxis->setTickStep(plotRange/4);
+  customPlot2->xAxis->setTickStep(plotRangeX/4);
+  customPlot2->yAxis->setTickStep(plotRangeY/4);
   customPlot2->axisRect()->setupFullAxesBox();
 
   // make left and bottom axes transfer their ranges to right and top axes:
@@ -135,31 +137,28 @@ void MainWindow::setupPlot2(QCustomPlot *customPlot2)
 
 void MainWindow::updatePlot1(double timeStamp, double redPlot, double bluePlot)
 {
-//    double *i;
-//    double *j;
-//    i=&timeStamp;
-//    j=&redPlot;
 
     //Red
     if(plot1Enable[0]) { //sinal calculado
-          ui->customPlot->graph(0)->addData(timeStamp, redPlot);
-          //ui->customPlot->graph(2)->clearData();
-//        ui->customPlot->graph(2)->addData(timeStamp, redPlot);
-//        ui->customPlot->graph(0)->removeDataBefore(timeStamp-plotRange);
-//        ui->customPlot->graph(0)->rescaleValueAxis();
+        ui->customPlot->graph(0)->addData(timeStamp, redPlot);
+        ui->customPlot->graph(2)->clearData();
+        ui->customPlot->graph(2)->addData(timeStamp, redPlot);
+        ui->customPlot->graph(0)->removeDataBefore(timeStamp-plotRangeX);
+        ui->customPlot->graph(0)->rescaleValueAxis();
     }
 
     //Blue
     if(plot1Enable[1]) { //sinal saturado
-//        ui->customPlot->graph(1)->addData(timeStamp, bluePlot);
-//        ui->customPlot->graph(3)->clearData();
-//        ui->customPlot->graph(3)->addData(timeStamp, bluePlot);
-//        ui->customPlot->graph(1)->removeDataBefore(timeStamp-plotRange);
-//        ui->customPlot->graph(1)->rescaleValueAxis(true);
+        ui->customPlot->graph(1)->addData(timeStamp, bluePlot);
+        ui->customPlot->graph(3)->clearData();
+        ui->customPlot->graph(3)->addData(timeStamp, bluePlot);
+        ui->customPlot->graph(1)->removeDataBefore(timeStamp-plotRangeX);
+        ui->customPlot->graph(1)->rescaleValueAxis(true);
     }
 
     // make key axis range scroll with the data (at a constant range size of 8):
-    ui->customPlot->xAxis->setRange(timeStamp+0.25, plotRange, Qt::AlignRight);
+    ui->customPlot->xAxis->setRange(timeStamp+0.25, plotRangeX, Qt::AlignRight);
+    ui->customPlot->yAxis->setRange(0, plotRangeY, Qt::AlignRight);
     ui->customPlot->replot();
 
 }
@@ -173,7 +172,7 @@ void MainWindow::updatePlot2(double timeStamp, double redPlot, double bluePlot, 
         ui->customPlot2->graph(0)->addData(timeStamp, redPlot);
         ui->customPlot2->graph(4)->clearData();
         ui->customPlot2->graph(4)->addData(timeStamp, redPlot);
-        ui->customPlot2->graph(0)->removeDataBefore(timeStamp-plotRange);
+        ui->customPlot2->graph(0)->removeDataBefore(timeStamp-plotRangeX);
         ui->customPlot2->graph(0)->rescaleValueAxis(true);
     }
 
@@ -182,7 +181,7 @@ void MainWindow::updatePlot2(double timeStamp, double redPlot, double bluePlot, 
         ui->customPlot2->graph(1)->addData(timeStamp, bluePlot);
         ui->customPlot2->graph(5)->clearData();
         ui->customPlot2->graph(5)->addData(timeStamp, bluePlot);
-        ui->customPlot2->graph(1)->removeDataBefore(timeStamp-plotRange);
+        ui->customPlot2->graph(1)->removeDataBefore(timeStamp-plotRangeX);
         ui->customPlot2->graph(1)->rescaleValueAxis(true);
     }
 
@@ -191,7 +190,7 @@ void MainWindow::updatePlot2(double timeStamp, double redPlot, double bluePlot, 
         ui->customPlot2->graph(2)->addData(timeStamp, greenPlot);
         ui->customPlot2->graph(6)->clearData();
         ui->customPlot2->graph(6)->addData(timeStamp, greenPlot);
-        ui->customPlot2->graph(2)->removeDataBefore(timeStamp-plotRange);
+        ui->customPlot2->graph(2)->removeDataBefore(timeStamp-plotRangeX);
         ui->customPlot2->graph(2)->rescaleValueAxis(true);
     }
 
@@ -200,13 +199,14 @@ void MainWindow::updatePlot2(double timeStamp, double redPlot, double bluePlot, 
         ui->customPlot2->graph(3)->addData(timeStamp, orangePlot);
         ui->customPlot2->graph(7)->clearData();
         ui->customPlot2->graph(7)->addData(timeStamp, orangePlot);
-        ui->customPlot2->graph(3)->removeDataBefore(timeStamp-plotRange);
+        ui->customPlot2->graph(3)->removeDataBefore(timeStamp-plotRangeX);
         ui->customPlot2->graph(3)->rescaleValueAxis(true);
     }
 
 
     // make key axis range scroll with the data (at a constant range size of 8):
-    ui->customPlot2->xAxis->setRange(timeStamp+0.25, plotRange, Qt::AlignRight);
+    ui->customPlot2->xAxis->setRange(timeStamp+0.25, plotRangeX, Qt::AlignRight);
+    ui->customPlot2->yAxis->setRange(0, plotRangeY, Qt::AlignRight);
     ui->customPlot2->replot();
 
 }
@@ -217,16 +217,16 @@ void MainWindow::updatePlot2(double timeStamp, double redPlot, double bluePlot, 
 void MainWindow::onPlotValues(double timeStamp, double sinalCalculado, double sinalSaturado, double nivelTanque1, double nivelTanque2, double setPoint, double erro)
 {
 
-    qDebug() << "timeStamp";
-    qDebug() <<timeStamp;
-    qDebug() << "sinalCalculado";
-    qDebug() <<sinalCalculado;
-    qDebug() << "sinalSaturado";
-    qDebug() <<sinalSaturado;
+//    qDebug() << "timeStamp";
+//    qDebug() <<timeStamp;
+//    qDebug() << "sinalCalculado";
+//    qDebug() <<sinalCalculado;
+//    qDebug() << "sinalSaturado";
+//    qDebug() <<sinalSaturado;
 
 
-     MainWindow::updatePlot1(timeStamp,sinalCalculado,sinalSaturado);
-    MainWindow::updatePlot2(timeStamp,nivelTanque1,nivelTanque2,setPoint,erro);
+    MainWindow::updatePlot1((timeStamp-theThread->runTime),sinalCalculado,sinalSaturado);
+    MainWindow::updatePlot2((timeStamp-theThread->runTime),nivelTanque1,nivelTanque2,setPoint,erro);
 
     //Update Water Level
     //ui->progressBar->setValue(nivelTanque1*100);
@@ -272,6 +272,7 @@ void MainWindow::on_conectar_clicked(bool checked)
     if (conectado==true) {
         ui->conectar->setText("Desconectar");
         ui->label_conectar->setText("Conectado");
+        theThread->parar=false;
         theThread->inicia();
         theThread->zeraParametros();
     }
@@ -281,7 +282,8 @@ void MainWindow::on_conectar_clicked(bool checked)
         theThread->zeraParametros();
         //Espera a thread ler os valores
         QThread::msleep (1000);
-        //Termina a thread
+        //Termina a thread        
+        theThread->parar=true;
         theThread->terminate();
     }
 
@@ -296,18 +298,26 @@ void MainWindow::on_atualizar_clicked()
     if(malhaFechada==false){
        ui->label_offset->setText("offset (Volts)");
     }
-    segundoOuFrequencia=ui->tempo_Hz_s->currentIndex();
-    basicoNivel1=ui->basico_nivel1->value();
-    basicoNivel2=ui->basico_nivel2->value();
+    segundoOuFrequencia=ui->tempo_Hz_s->currentIndex();   
     if(ui->tempo_Hz_s->currentIndex()==0){
-        tempo=1/tempo;
+        tempo=1/ui->tempo->value();
     }
-    tempo=ui->tempo->value();
+    if(ui->tempo_Hz_s->currentIndex()==1){
+        tempo=ui->tempo->value();
+    }
     amplitude=ui->amplitude->value();
     offset=ui->offset->value();
     duracaoMax=ui->duracao_max->value();
     duracaoMin=ui->duracao_min->value();
     tipoOnda=proxtipoOnda;
+    if(ui->aba_controle->currentIndex()==0){// modo basico
+        basicoNivel1=ui->basico_nivel1->value();
+        basicoNivel2=ui->basico_nivel2->value();
+        offset=basicoNivel1;
+        malhaFechada=true;
+        tipoOnda=0;
+
+    }
     theThread->atualizaParametros(malhaFechada,tipoOnda, basicoNivel1 , basicoNivel2, tempo, amplitude, offset,  duracaoMax,  duracaoMin);
 
 }
@@ -403,7 +413,8 @@ void MainWindow::on_zerar_clicked()
     ui->leitura_7->setChecked(false);
     ui->escrita_1->setChecked(true);
     ui->malhaFechada->click();
-    ui->sinal_dregrau->click();
+    ui->sinal_dregrau->click();    
+    theThread->parar=true;
     on_atualizar_clicked();
 }
 
@@ -436,16 +447,12 @@ void MainWindow::on_pushButton_default_clicked()
 {
     offset=2.5;
     if(malhaFechada==true){
-        offset=15;
+        offset=4;
     }
     ui->offset->setValue(offset);
     switch(this->proxtipoOnda)
     {
     case 0://degrau:
-        basicoNivel1=0;
-        ui->basico_nivel1->setValue(basicoNivel1);
-        basicoNivel2=0;
-        ui->basico_nivel2->setValue(basicoNivel2);
         tempo=0; // segundos ou hz
         ui->tempo->setValue(tempo);
         amplitude=0;
@@ -456,13 +463,11 @@ void MainWindow::on_pushButton_default_clicked()
         ui->duracao_min->setValue(duracaoMin);
         break;
     case 1://senoidal:
-        basicoNivel1=0;
-        ui->basico_nivel1->setValue(basicoNivel1);
-        basicoNivel2=0;
-        ui->basico_nivel2->setValue(basicoNivel2);
-        tempo=0; // segundos ou hz
+        offset=3;
+        ui->offset->setValue(offset);
+        tempo=10; // segundos ou hz
         ui->tempo->setValue(tempo);
-        amplitude=0;
+        amplitude=1;
         ui->amplitude->setValue(amplitude);
         duracaoMax=0;
         ui->duracao_max->setValue(duracaoMax);
@@ -470,13 +475,11 @@ void MainWindow::on_pushButton_default_clicked()
         ui->duracao_min->setValue(duracaoMin);
         break;
     case 2://quadrada:
-        basicoNivel1=0;
-        ui->basico_nivel1->setValue(basicoNivel1);
-        basicoNivel2=0;
-        ui->basico_nivel2->setValue(basicoNivel2);
-        tempo=0; // segundos ou hz
+        offset=3;
+        ui->offset->setValue(offset);
+        tempo=10; // segundos ou hz
         ui->tempo->setValue(tempo);
-        amplitude=0;
+        amplitude=1;
         ui->amplitude->setValue(amplitude);
         duracaoMax=0;
         ui->duracao_max->setValue(duracaoMax);
@@ -484,13 +487,11 @@ void MainWindow::on_pushButton_default_clicked()
         ui->duracao_min->setValue(duracaoMin);
         break;
     case 3://serra:
-        basicoNivel1=0;
-        ui->basico_nivel1->setValue(basicoNivel1);
-        basicoNivel2=0;
-        ui->basico_nivel2->setValue(basicoNivel2);
-        tempo=0; // segundos ou hz
+        offset=3;
+        ui->offset->setValue(offset);
+        tempo=10; // segundos ou hz
         ui->tempo->setValue(tempo);
-        amplitude=0;
+        amplitude=1;
         ui->amplitude->setValue(amplitude);
         duracaoMax=0;
         ui->duracao_max->setValue(duracaoMax);
@@ -498,17 +499,15 @@ void MainWindow::on_pushButton_default_clicked()
         ui->duracao_min->setValue(duracaoMin);
         break;
     case 4://aleatorio:
-        basicoNivel1=0;
-        ui->basico_nivel1->setValue(basicoNivel1);
-        basicoNivel2=0;
-        ui->basico_nivel2->setValue(basicoNivel2);
-        tempo=0; // segundos ou hz
+        offset=3;
+        ui->offset->setValue(offset);
+        tempo=10; // segundos ou hz
         ui->tempo->setValue(tempo);
-        amplitude=0;
+        amplitude=1;
         ui->amplitude->setValue(amplitude);
-        duracaoMax=0;
+        duracaoMax=5;
         ui->duracao_max->setValue(duracaoMax);
-        duracaoMin=0;
+        duracaoMin=2;
         ui->duracao_min->setValue(duracaoMin);
         break;
     default:
@@ -522,7 +521,9 @@ void MainWindow::on_malhaAberta_clicked(bool checked)
 
     if(checked==true){
         ui->label_offset->setText("offset (Volts)");
-        this->malhaFechada==false;
+    }
+    if(checked==false){
+        ui->label_offset->setText("offset (Volts)");
     }
 
     ui->offset->setMinimum(-4.0);
@@ -533,8 +534,46 @@ void MainWindow::on_malhaFechada_clicked(bool checked)
 {
     if(checked==true){
         ui->label_offset->setText("offset (Cm)");
-        this->malhaFechada==true;
     }
     ui->offset->setMinimum(0.0);
     ui->offset->setMaximum(30.0);
+}
+
+
+
+void MainWindow::setTickStep()
+{
+    //Valores no eixo X por segundo, proporcao utilizada no exemplo 8/4=2s
+    ui->customPlot->xAxis->setTickStep(plotRangeX/4);
+    ui->customPlot2->xAxis->setTickStep(plotRangeX/4);
+    ui->customPlot->yAxis->setTickStep(plotRangeY/4);
+    ui->customPlot2->yAxis->setTickStep(plotRangeY/4);
+}
+
+void MainWindow::on_spinBox_escalaX_valueChanged(int arg1)
+{
+    ui->horizontalSlider_escalaX->setValue(arg1);
+    plotRangeX = arg1;
+    setTickStep();
+}
+
+void MainWindow::on_horizontalSlider_escalaX_valueChanged(int value)
+{
+    ui->spinBox_escalaX->setValue(value);
+    plotRangeX = value;
+    setTickStep();
+}
+
+void MainWindow::on_verticalSlider_escalaY_valueChanged(int value)
+{
+    ui->spinBox_escalaY->setValue(value);
+    plotRangeY = value;
+    setTickStep();
+}
+
+void MainWindow::on_spinBox_escalaY_valueChanged(int arg1)
+{
+    ui->verticalSlider_escalaY->setValue(arg1);
+    plotRangeY = arg1;
+    setTickStep();
 }

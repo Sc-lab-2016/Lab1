@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QTimer>
 #include "threadControl.h"
+#include "qcustomplot.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -19,11 +21,16 @@ public:
     ~MainWindow();
     enum tipoOnda { degrau, senoidal, quadrada, serra, aleatorio };
     threadControl *theThread;
+    void setupPlot1(QCustomPlot *customPlot);
+    void setupPlot2(QCustomPlot *customPlot2);
+    void updatePlot1(double timeStamp, double redPlot, double bluePlot);
+    void updatePlot2(double timeStamp, double redPlot, double bluePlot, double greenPlot, double orangePlot);
+
 
 
 public slots:
 
-     void onPlotValues(double timeStamp, double sinalCalculado, double sinalSaturado, double leituraTanque1, double leituraTanque2, double setPoint, double erro);
+     void onPlotValues(double timeStamp, double sinalCalculado, double sinalSaturado, double nivelTanque1, double nivelTanque2, double setPoint, double erro);
 
 private slots:
 
@@ -71,9 +78,11 @@ private:
     bool malhaFechada; // malha aberta ou fechada
     bool segundoOuFrequencia; // true = s ; false= hz
     bool conectado;
+    bool plot1Enable[2], plot2Enable[4];
 
     int tipoOnda;//selecionador de tipo de onda
     int proxtipoOnda;
+    int plotRange;
 
     double basicoNivel1; // nivel tanque 1
     double basicoNivel2; // nivel tanque 2
@@ -89,7 +98,7 @@ private:
     double lastTimeStamp, timeToNextRandomNumber; // medidas de tempo
     double lastLoopTimeStamp; // medidas de tempo
 
-     void setTickStep();
+    void setTickStep();
 };
 
 #endif // MAINWINDOW_H

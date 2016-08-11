@@ -12,14 +12,12 @@ threadControl::threadControl(QObject *parent):
 void threadControl::run(){
 
     //Conecta com os tanques
+    timeStamp = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+    lastLoopTimeStamp=timeStamp;
 
-
-    //Inicia a contagem de tempo
-    double timeStamp = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
-
-    double leituraTanque1 = q->readAD(0) * 6.25;// ler sensor e multiplica pelo ganho
+    double leituraTanque1 = 0;//q->readAD(0) * 6.25;// ler sensor e multiplica pelo ganho
     if (leituraTanque1 < 0) leituraTanque1 = 0;
-    double leituraTanque2 = q->readAD(1) * 6.25;
+    double leituraTanque2 =0;//q->readAD(1) * 6.25;
     if (leituraTanque2 < 0) leituraTanque2 = 0;
     qDebug() << "tipo de onda:";
     qDebug() << tipoOnda;
@@ -81,7 +79,7 @@ void threadControl::run(){
     // Escreve no canal 0
      qDebug() << "Sinal  Saturado:";
      qDebug() << sinalSaturado;
-     q->writeDA(0, sinalSaturado);
+     //q->writeDA(0, sinalSaturado);
 
 
     emit plotValues(timeStamp, this->sinalCalculado,
@@ -97,8 +95,10 @@ void threadControl::run(){
 
 void threadControl::inicia()
 {
-    q = new Quanser("10.13.99.69", 20081);
+    //q = new Quanser("10.13.99.69", 20081);
     timer = new QTimer(this);
+    //incia contagem de tempo
+    timeStamp = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     connect(timer,SIGNAL(timeout()),this,SLOT(run()));
     timer->start(10);
 

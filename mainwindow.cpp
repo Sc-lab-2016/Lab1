@@ -13,6 +13,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
    // QMainWindow::showFullScreen();
+    plotRange = 8;
+
+    // Setup plots
+    setupPlot1(ui->customPlot);
+    setupPlot2(ui->customPlot2);
+
+    //Inicialização para o plot randômico
+    timeToNextRandomNumber=0;
+
 
     malhaFechada=true;
     tipoOnda=0;
@@ -35,21 +44,195 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::setupPlot1(QCustomPlot *customPlot)
+{
+#if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
+  QMessageBox::critical(this, "", "Você deve usar a versão > 4.7");
+#endif
+    plot1Enable[0]=true;//Red Enabled
+    plot1Enable[1]=true;//Blue Enabled
+
+    customPlot->addGraph(); // red line
+    customPlot->graph(0)->setPen(QPen(Qt::red));
+    customPlot->graph(0)->setAntialiasedFill(false);
+    customPlot->addGraph(); // blue line
+    customPlot->graph(1)->setPen(QPen(Qt::blue));
+
+    customPlot->addGraph(); // red dot
+    customPlot->graph(2)->setPen(QPen(Qt::red));
+    customPlot->graph(2)->setLineStyle(QCPGraph::lsNone);
+    customPlot->graph(2)->setScatterStyle(QCPScatterStyle::ssDisc);
+    customPlot->addGraph(); // blue dot
+    customPlot->graph(3)->setPen(QPen(Qt::blue));
+    customPlot->graph(3)->setLineStyle(QCPGraph::lsNone);
+    customPlot->graph(3)->setScatterStyle(QCPScatterStyle::ssDisc);
+
+    customPlot->xAxis->setTickLabelType(QCPAxis::ltDateTime);
+    customPlot->xAxis->setDateTimeFormat("hh:mm:ss");
+    customPlot->xAxis->setAutoTickStep(false);
+    //Valores no eixo X por segundo, proporcao utilizada no exemplo 8/4=2s
+    customPlot->xAxis->setTickStep(plotRange/4);
+    customPlot->axisRect()->setupFullAxesBox();
 
 
-void MainWindow::onPlotValues(double timeStamp, double sinalCalculado, double sinalSaturado, double leituraTanque1, double leituraTanque2, double setPoint, double erro)
+    // make left and bottom axes transfer their ranges to right and top axes:
+    connect(customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->xAxis2, SLOT(setRange(QCPRange)));
+    connect(customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+
+}
+
+void MainWindow::setupPlot2(QCustomPlot *customPlot2)
+{
+#if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
+  QMessageBox::critical(this, "", "Você deve usar a versão > 4.7");
+#endif
+
+  plot2Enable[0]=true;//Red Enabled
+  plot2Enable[1]=true;//Blue Enabled
+  plot2Enable[2]=true;//Green Enabled
+  plot2Enable[3]=true;//Orange Enabled
+
+  customPlot2->addGraph(); // red line
+  customPlot2->graph(0)->setPen(QPen(Qt::red));
+  customPlot2->graph(0)->setAntialiasedFill(false);
+  customPlot2->addGraph(); // blue line
+  customPlot2->graph(1)->setPen(QPen(Qt::blue));
+  customPlot2->addGraph(); // green line
+  customPlot2->graph(2)->setPen(QPen(Qt::green));
+  customPlot2->addGraph(); // orange line
+  customPlot2->graph(3)->setPen(QPen(qRgb(255,128,0)));
+
+  customPlot2->addGraph(); // red dot
+  customPlot2->graph(4)->setPen(QPen(Qt::red));
+  customPlot2->graph(4)->setLineStyle(QCPGraph::lsNone);
+  customPlot2->graph(4)->setScatterStyle(QCPScatterStyle::ssDisc);
+  customPlot2->addGraph(); // blue dot
+  customPlot2->graph(5)->setPen(QPen(Qt::blue));
+  customPlot2->graph(5)->setLineStyle(QCPGraph::lsNone);
+  customPlot2->graph(5)->setScatterStyle(QCPScatterStyle::ssDisc);
+  customPlot2->addGraph(); // green dot
+  customPlot2->graph(6)->setPen(QPen(Qt::green));
+  customPlot2->graph(6)->setLineStyle(QCPGraph::lsNone);
+  customPlot2->graph(6)->setScatterStyle(QCPScatterStyle::ssDisc);
+  customPlot2->addGraph(); // orange dot
+  customPlot2->graph(7)->setPen(QPen(qRgb(255,128,0)));
+  customPlot2->graph(7)->setLineStyle(QCPGraph::lsNone);
+  customPlot2->graph(7)->setScatterStyle(QCPScatterStyle::ssDisc);
+
+  customPlot2->xAxis->setTickLabelType(QCPAxis::ltDateTime);
+  customPlot2->xAxis->setDateTimeFormat("hh:mm:ss");
+  customPlot2->xAxis->setAutoTickStep(false);
+  //Valores no eixo X por segundo, proporcao utilizada no exemplo 8/4=2s
+  customPlot2->xAxis->setTickStep(plotRange/4);
+  customPlot2->axisRect()->setupFullAxesBox();
+
+  // make left and bottom axes transfer their ranges to right and top axes:
+  connect(customPlot2->xAxis, SIGNAL(rangeChanged(QCPRange)), customPlot2->xAxis2, SLOT(setRange(QCPRange)));
+  connect(customPlot2->yAxis, SIGNAL(rangeChanged(QCPRange)), customPlot2->yAxis2, SLOT(setRange(QCPRange)));
+
+}
+
+void MainWindow::updatePlot1(double timeStamp, double redPlot, double bluePlot)
+{
+//    double *i;
+//    double *j;
+//    i=&timeStamp;
+//    j=&redPlot;
+
+    //Red
+    if(plot1Enable[0]) { //sinal calculado
+          ui->customPlot->graph(0)->addData(timeStamp, redPlot);
+          //ui->customPlot->graph(2)->clearData();
+//        ui->customPlot->graph(2)->addData(timeStamp, redPlot);
+//        ui->customPlot->graph(0)->removeDataBefore(timeStamp-plotRange);
+//        ui->customPlot->graph(0)->rescaleValueAxis();
+    }
+
+    //Blue
+    if(plot1Enable[1]) { //sinal saturado
+//        ui->customPlot->graph(1)->addData(timeStamp, bluePlot);
+//        ui->customPlot->graph(3)->clearData();
+//        ui->customPlot->graph(3)->addData(timeStamp, bluePlot);
+//        ui->customPlot->graph(1)->removeDataBefore(timeStamp-plotRange);
+//        ui->customPlot->graph(1)->rescaleValueAxis(true);
+    }
+
+    // make key axis range scroll with the data (at a constant range size of 8):
+    ui->customPlot->xAxis->setRange(timeStamp+0.25, plotRange, Qt::AlignRight);
+    ui->customPlot->replot();
+
+}
+
+void MainWindow::updatePlot2(double timeStamp, double redPlot, double bluePlot, double greenPlot, double orangePlot)
 {
 
-    if(sinalSaturado<0){
-    sinalSaturado=sinalSaturado+(sinalSaturado*12.5);
-    }
-    else {
-    sinalSaturado=(sinalSaturado*12.5)+50;
-    }
-    ui->progressBar_sinalSaturado1->setValue(sinalSaturado);
-    QString s = QString::number(sinalCalculado);
-    ui->label_teste->setText(s);
 
+    //Red
+    if(plot2Enable[0]) { // nivel tanque 1
+        ui->customPlot2->graph(0)->addData(timeStamp, redPlot);
+        ui->customPlot2->graph(4)->clearData();
+        ui->customPlot2->graph(4)->addData(timeStamp, redPlot);
+        ui->customPlot2->graph(0)->removeDataBefore(timeStamp-plotRange);
+        ui->customPlot2->graph(0)->rescaleValueAxis(true);
+    }
+
+    //Blue
+    if(plot2Enable[1]){ // nivel tanque 2
+        ui->customPlot2->graph(1)->addData(timeStamp, bluePlot);
+        ui->customPlot2->graph(5)->clearData();
+        ui->customPlot2->graph(5)->addData(timeStamp, bluePlot);
+        ui->customPlot2->graph(1)->removeDataBefore(timeStamp-plotRange);
+        ui->customPlot2->graph(1)->rescaleValueAxis(true);
+    }
+
+    //Green
+    if(plot2Enable[2]) { // setpoint
+        ui->customPlot2->graph(2)->addData(timeStamp, greenPlot);
+        ui->customPlot2->graph(6)->clearData();
+        ui->customPlot2->graph(6)->addData(timeStamp, greenPlot);
+        ui->customPlot2->graph(2)->removeDataBefore(timeStamp-plotRange);
+        ui->customPlot2->graph(2)->rescaleValueAxis(true);
+    }
+
+    //Orange
+    if(plot2Enable[3]) { //erro
+        ui->customPlot2->graph(3)->addData(timeStamp, orangePlot);
+        ui->customPlot2->graph(7)->clearData();
+        ui->customPlot2->graph(7)->addData(timeStamp, orangePlot);
+        ui->customPlot2->graph(3)->removeDataBefore(timeStamp-plotRange);
+        ui->customPlot2->graph(3)->rescaleValueAxis(true);
+    }
+
+
+    // make key axis range scroll with the data (at a constant range size of 8):
+    ui->customPlot2->xAxis->setRange(timeStamp+0.25, plotRange, Qt::AlignRight);
+    ui->customPlot2->replot();
+
+}
+
+
+
+
+void MainWindow::onPlotValues(double timeStamp, double sinalCalculado, double sinalSaturado, double nivelTanque1, double nivelTanque2, double setPoint, double erro)
+{
+
+    qDebug() << "timeStamp";
+    qDebug() <<timeStamp;
+    qDebug() << "sinalCalculado";
+    qDebug() <<sinalCalculado;
+    qDebug() << "sinalSaturado";
+    qDebug() <<sinalSaturado;
+
+
+     MainWindow::updatePlot1(timeStamp,sinalCalculado,sinalSaturado);
+    MainWindow::updatePlot2(timeStamp,nivelTanque1,nivelTanque2,setPoint,erro);
+
+    //Update Water Level
+    //ui->progressBar->setValue(nivelTanque1*100);
+//    ui->label_5->setText(QString::number(nivelTanque1,'g',2)+" cm");
+//   // ui->progressBar_2->setValue(nivelTanque2*100);
+//    ui->label_7->setText(QString::number(nivelTanque2,'g',2)+" cm");
 
 }
 

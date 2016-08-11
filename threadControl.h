@@ -40,6 +40,7 @@ private:
     double sinalCalculado, sinalSaturado;
     double timeToNextRandomNumber; // medidas de tempo
     double lastTimeStamp, lastLoopTimeStamp; // medidas de tempo
+    double timeStamp;
 
     QTimer *timer;
 
